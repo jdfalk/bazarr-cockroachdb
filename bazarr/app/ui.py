@@ -160,7 +160,7 @@ def backup_download(filename):
 def swaggerui_static(filename):
     basepath = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'libs', 'flask_restx',
                             'static')
-    fullpath = os.path.realpath(os.path.join(basepath, filename))
+    fullpath = os.path.normpath(os.path.join(basepath, filename))
     if not basepath == os.path.commonpath((basepath, fullpath)):
         return '', 404
     else:
