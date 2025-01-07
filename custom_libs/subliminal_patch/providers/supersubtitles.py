@@ -195,10 +195,12 @@ class SuperSubtitlesProvider(Provider, ProviderSubtitleArchiveMixin):
         links = soup.find_all("a")
 
         for value in links:
-            if "imdb.com" in str(value):
+            href = value.get('href', '')
+            host = urllib.parse.urlparse(href).hostname
+            if host and host.endswith("imdb.com"):
                 # <a alt="iMDB" href="http://www.imdb.com/title/tt2357547/" target="_blank"><img alt="iMDB"
                 # src="img/adatlap/imdb.png"/></a>
-                imdb_id = re.search(r'(?<=www\.imdb\.com/title/).*(?=/")', str(value))
+                imdb_id = re.search(r'(?<=www\.imdb\.com/title/).*(?=/")', href)
                 imdb_id = imdb_id.group() if imdb_id else ''
                 logger.debug("IMDB ID found: %s", imdb_id)
                 return imdb_id
