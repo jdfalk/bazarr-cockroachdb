@@ -41,6 +41,10 @@ jobs:
       - name: Install dependencies
         run: npm install
         working-directory: ${{ env.UI_DIRECTORY }}
+      
+      - name: Update browserlist
+        run: npx update-browserslist-db@latest
+        working-directory: ${{ env.UI_DIRECTORY }}
 
       - name: Check Types
         run: npm run check:ts
