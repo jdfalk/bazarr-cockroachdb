@@ -197,7 +197,7 @@ class SuperSubtitlesProvider(Provider, ProviderSubtitleArchiveMixin):
         for value in links:
             href = value.get('href', '')
             host = urllib.parse.urlparse(href).hostname
-            if host and host.endswith("imdb.com"):
+            if host and host.endswith(".imdb.com"):
                 # <a alt="iMDB" href="http://www.imdb.com/title/tt2357547/" target="_blank"><img alt="iMDB"
                 # src="img/adatlap/imdb.png"/></a>
                 imdb_id = re.search(r'(?<=www\.imdb\.com/title/).*(?=/")', href)
