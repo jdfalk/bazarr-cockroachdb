@@ -75,7 +75,10 @@ def catch_all(path):
 
     # PWA Assets are returned from frontend root folder
     if path in pwa_assets or path.startswith('workbox-'):
-        return send_file(os.path.join(frontend_build_path, path))
+        fullpath = os.path.normpath(os.path.join(frontend_build_path, path))
+        if not fullpath.startswith(frontend_build_path):
+            return abort(403, description="Access denied")
+        return send_file(fullpath)
 
     auth = True
     if settings.auth.type == 'basic':
