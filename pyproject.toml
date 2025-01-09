@@ -16,7 +16,8 @@ keywords = [
 ]
 requires-python = ">=3.8,<3.13"
 maintainers = [
-  {name = "morpheus65535", email = "louis_vezina@hotmail.com"}
+  {name = "morpheus65535", email = "louis_vezina@hotmail.com"},
+  {name = "Johnathan Falk", email = "johnathan.falk@gmail.com"}
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -91,6 +92,7 @@ dependencies = [
   "waitress>=3.0.0",
   "webrtcvad-wheels>=2.0.10",
   "whichcraft>=0.6.1",
+  "sqlalchemy-cockroachdb>0",
 ]
 
 [project.optional-dependencies]

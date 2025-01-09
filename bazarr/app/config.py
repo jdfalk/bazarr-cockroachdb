@@ -1,23 +1,24 @@
 # coding=utf-8
 
-import hashlib
-import os
 import ast
+import hashlib
 import logging
+import os
 import re
-
-from urllib.parse import quote_plus
-from utilities.binaries import BinaryNotFound, get_binary
-from literals import EXIT_VALIDATION_ERROR
-from utilities.central import stop_bazarr
-from subliminal.cache import region
-from dynaconf import Dynaconf, Validator as OriginalValidator
-from dynaconf.loaders.yaml_loader import write
-from dynaconf.validator import ValidationError
-from dynaconf.utils.functional import empty
-from ipaddress import ip_address
 from binascii import hexlify
+from ipaddress import ip_address
 from types import MappingProxyType
+from urllib.parse import quote_plus
+
+from dynaconf import Dynaconf
+from dynaconf import Validator as OriginalValidator
+from dynaconf.loaders.yaml_loader import write
+from dynaconf.utils.functional import empty
+from dynaconf.validator import ValidationError
+from literals import EXIT_VALIDATION_ERROR
+from subliminal.cache import region
+from utilities.binaries import BinaryNotFound, get_binary
+from utilities.central import stop_bazarr
 
 from .get_args import args
 
@@ -402,6 +403,14 @@ validators = [
     Validator('postgresql.username', must_exist=True, default='', is_type_of=str, cast=str),
     Validator('postgresql.password', must_exist=True, default='', is_type_of=str, cast=str),
 
+    # cockroachdb section
+    Validator('cockroachdb.enabled', must_exist=True, default=False, is_type_of=bool),
+    Validator('cockroachdb.host', must_exist=True, default='localhost', is_type_of=str),
+    Validator('cockroachdb.port', must_exist=True, default=5432, is_type_of=int, gte=1, lte=65535),
+    Validator('cockroachdb.database', must_exist=True, default='', is_type_of=str),
+    Validator('cockroachdb.username', must_exist=True, default='', is_type_of=str, cast=str),
+    Validator('cockroachdb.password', must_exist=True, default='', is_type_of=str, cast=str),
+
     # anidb section
     Validator('anidb.api_client', must_exist=True, default='', is_type_of=str),
     Validator('anidb.api_client_ver', must_exist=True, default=1, is_type_of=int),
@@ -410,6 +419,7 @@ validators = [
 
 def convert_ini_to_yaml(config_file):
     import configparser
+
     import yaml
     config_object = configparser.RawConfigParser()
     file = open(config_file, "r")
@@ -754,18 +764,20 @@ def save_settings(settings_items):
             update_subzero = True
 
     if use_embedded_subs_changed or undefined_audio_track_default_changed:
-        from .scheduler import scheduler
-        from subtitles.indexer.series import list_missing_subtitles
         from subtitles.indexer.movies import list_missing_subtitles_movies
+        from subtitles.indexer.series import list_missing_subtitles
+
+        from .scheduler import scheduler
         if settings.general.use_sonarr:
             scheduler.add_job(list_missing_subtitles, kwargs={'send_event': True})
         if settings.general.use_radarr:
             scheduler.add_job(list_missing_subtitles_movies, kwargs={'send_event': True})
 
     if undefined_subtitles_track_default_changed:
-        from .scheduler import scheduler
-        from subtitles.indexer.series import series_full_scan_subtitles
         from subtitles.indexer.movies import movies_full_scan_subtitles
+        from subtitles.indexer.series import series_full_scan_subtitles
+
+        from .scheduler import scheduler
         if settings.general.use_sonarr:
             scheduler.add_job(series_full_scan_subtitles, kwargs={'use_cache': True})
         if settings.general.use_radarr:
@@ -801,8 +813,8 @@ def save_settings(settings_items):
             configure_captcha_func()
 
         if update_schedule:
-            from .scheduler import scheduler
             from .event_handler import event_stream
+            from .scheduler import scheduler
             scheduler.update_configurable_tasks()
             event_stream(type='task')
 

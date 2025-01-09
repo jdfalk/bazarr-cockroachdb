@@ -102,6 +102,8 @@ def run_migrations_online():
                 bind.execute(text("PRAGMA foreign_keys=OFF;"))
             elif bind.engine.name == 'postgresql':
                 bind.execute(text("SET CONSTRAINTS ALL DEFERRED;"))
+            else:
+                logging.debug(msg="Don't set anything")
 
             context.run_migrations()
 
@@ -109,6 +111,8 @@ def run_migrations_online():
                 bind.execute(text("PRAGMA foreign_keys=ON;"))
             elif bind.engine.name == 'postgresql':
                 bind.execute(text("SET CONSTRAINTS ALL IMMEDIATE;"))
+            else:
+                logging.debug(msg="Don't set anything")
 
 
 if context.is_offline_mode():
