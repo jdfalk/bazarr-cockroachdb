@@ -126,18 +126,18 @@ exclude = [
 "./custom_libs" = "bazarr/custom_libs"
 "./frontend/build" = "bazarr/frontend/build"
 
-[[tool.hatch.build.targets.wheel.hooks.build-scripts.scripts]]
-out_dir = "frontend/build"
-clean_artifacts = true
-clean_out_dir = true
-work_dir = "frontend"
-commands = [
-  "npm install",
-  "npm run build",
-]
-artifacts = [
-  "frontend/build/*",
-]
+# [[tool.hatch.build.targets.wheel.hooks.build-scripts.scripts]]
+# out_dir = "frontend/build"
+# clean_artifacts = true
+# clean_out_dir = true
+# work_dir = "frontend"
+# commands = [
+#  "npm install",
+#  "npm run build",
+#]
+#artifacts = [
+#  "frontend/build/*",
+#]
 
 [tool.ruff]
 exclude = [
