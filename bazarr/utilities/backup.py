@@ -52,7 +52,7 @@ def backup_to_zip():
     backup_filename = f"bazarr_backup_v{os.environ['BAZARR_VERSION']}_{now_string}.zip"
     logging.debug(f'Backup filename will be: {backup_filename}')
 
-    if not settings.postgresql.enabled:
+    if not (settings.postgresql.enabled or settings.cockroachdb.enabled):
         database_src_file = os.path.join(args.config_dir, 'db', 'bazarr.db')
         logging.debug(f'Database file path to backup is: {database_src_file}')
 
@@ -113,7 +113,7 @@ def restore_from_backup():
             else:
                 if os.path.isfile(os.path.join(get_restore_path(), 'config.yaml')):
                     os.remove(os.path.join(get_restore_path(), 'config.yaml'))
-        if not settings.postgresql.enabled:
+        if not (settings.postgresql.enabled or settings.cockroachdb.enabled):
             try:
                 shutil.copy(restore_database_path, dest_database_path)
                 os.remove(restore_database_path)
