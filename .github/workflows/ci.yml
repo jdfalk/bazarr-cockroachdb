@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [development]
+    branches: 
+      - develop
     paths:
       - frontend/**
       - bazarr/**
@@ -13,7 +14,8 @@ on:
       - .python-version
       - .github/workflows/ci.yml
   pull_request:
-    branches: [development]
+    branches: 
+      - develop
 
 env:
   UI_DIRECTORY: ./frontend
@@ -104,7 +106,7 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
 
-      - name: Remove non-development frontend build
+      - name: Remove non-develop frontend build
         run: rm -rf "${{ env.UI_DIRECTORY }}/build"
 
       - name: Install UI
