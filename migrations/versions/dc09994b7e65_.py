@@ -5,18 +5,22 @@ Revises:
 Create Date: 2023-04-12 14:50:25.281288
 
 """
-from alembic import op
-import sqlalchemy as sa
-from sqlalchemy import exc as sa_exc
 import warnings
+
+import sqlalchemy as sa
+from alembic import op
+from sqlalchemy import exc as sa_exc
 
 try:
     from psycopg2.errors import UndefinedObject
 except ImportError:
     pass
 
-from app.database import TableHistory, TableHistoryMovie, TableBlacklist, TableBlacklistMovie, TableEpisodes, \
-    TableShows, TableMovies, TableLanguagesProfiles, TableShowsRootfolder, TableMoviesRootfolder
+from app.database import (TableBlacklist, TableBlacklistMovie, TableEpisodes,
+                          TableHistory, TableHistoryMovie,
+                          TableLanguagesProfiles, TableMovies,
+                          TableMoviesRootfolder, TableShows,
+                          TableShowsRootfolder)
 
 # revision identifiers, used by Alembic.
 revision = 'dc09994b7e65'

@@ -4,20 +4,21 @@ import atexit
 import json
 import logging
 import os
-import flask_migrate
 import signal
-
-from dogpile.cache import make_region
 from datetime import datetime
 
-from sqlalchemy import create_engine, inspect, DateTime, ForeignKey, Integer, LargeBinary, Text, func, text, BigInteger
-# importing here to be indirectly imported in other modules later
-from sqlalchemy import update, delete, select, func  # noqa W0611
-from sqlalchemy.orm import scoped_session, sessionmaker, mapped_column, close_all_sessions
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.pool import NullPool
-
+import flask_migrate
+from dogpile.cache import make_region
 from flask_sqlalchemy import SQLAlchemy
+# importing here to be indirectly imported in other modules later
+from sqlalchemy import (BigInteger, DateTime, ForeignKey,  # noqa W0611
+                        Integer, LargeBinary, Text, create_engine, delete,
+                        func, inspect, select, text, update)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import (close_all_sessions, mapped_column, scoped_session,
+                            sessionmaker)
+from sqlalchemy.pool import NullPool
+from sqlalchemy_cockroachdb import run_transaction
 
 from .config import settings
 from .get_args import args
@@ -30,11 +31,42 @@ if POSTGRES_ENABLED_ENV:
 else:
     postgresql = settings.postgresql.enabled
 
+COCKROACHDB_ENABLED_ENV = os.getenv("COCKROACHDB_ENABLED")
+if COCKROACHDB_ENABLED_ENV:
+    cockroachdb = COCKROACHDB_ENABLED_ENV.lower() == 'true'
+else:
+    cockroachdb = settings.cockroachdb.enabled
+
 region = make_region().configure('dogpile.cache.memory')
 
 migrations_directory = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'migrations')
 
-if postgresql:
+
+if postgresql and cockroachdb:
+    logger.fatal(msg="Both cockroachdb and postgres are enabled", exc_info=True)
+elif cockroachdb:
+    # insert is different between database types
+    from sqlalchemy.dialects.postgresql import insert  # noqa E402
+    from sqlalchemy.engine import URL  # noqa E402
+
+    cockroachdb_database = os.getenv("COCKROACHDB_DATABASE", settings.cockroachdb.database)
+    cockroachdb_username = os.getenv("COCKROACHDB_USERNAME", settings.cockroachdb.username)
+    cockroachdb_password = os.getenv("COCKROACHDB_PASSWORD", settings.cockroachdb.password)
+    cockroachdb_host = os.getenv("COCKROACHDB_HOST", settings.cockroachdb.host)
+    cockroachdb_port = int(os.getenv("COCKROACHDB_PORT", settings.cockroachdb.port))
+
+    logger.debug(f"Connecting to CockroachDB database: {cockroachdb_host}:{cockroachdb_port}/{cockroachdb_database}")
+    url = URL.create(
+        drivername="cockroachdb",
+        username=cockroachdb_username,
+        password=cockroachdb_password,
+        host=cockroachdb_host,
+        port=cockroachdb_port,
+        database=cockroachdb_database
+    )
+    engine = create_engine(url, poolclass=NullPool, isolation_level="AUTOCOMMIT", pool_pre_ping=True)    
+
+elif postgresql:
     # insert is different between database types
     from sqlalchemy.dialects.postgresql import insert  # noqa E402
     from sqlalchemy.engine import URL  # noqa E402
@@ -54,7 +86,7 @@ if postgresql:
         port=postgres_port,
         database=postgres_database
     )
-    engine = create_engine(url, poolclass=NullPool, isolation_level="AUTOCOMMIT")
+    engine = create_engine(url, poolclass=NullPool, isolation_level="AUTOCOMMIT", pool_pre_ping=True)
 else:
     # insert is different between database types
     from sqlalchemy.dialects.sqlite import insert  # noqa E402
@@ -62,8 +94,8 @@ else:
     logger.debug(f"Connecting to SQLite database: {url}")
     engine = create_engine(url, poolclass=NullPool, isolation_level="AUTOCOMMIT")
 
-    from sqlalchemy.engine import Engine
     from sqlalchemy import event
+    from sqlalchemy.engine import Engine
 
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -447,7 +479,9 @@ def get_profile_cutoff(profile_id):
 
 
 def get_audio_profile_languages(audio_languages_list_str):
-    from languages.get_languages import alpha2_from_language, alpha3_from_language, language_from_alpha2
+    from languages.get_languages import (alpha2_from_language,
+                                         alpha3_from_language,
+                                         language_from_alpha2)
     audio_languages = []
 
     und_default_language = language_from_alpha2(settings.general.default_und_audio_lang)
