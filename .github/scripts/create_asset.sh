@@ -22,6 +22,9 @@ done
 # COPY VERSION file
 cp VERSION $to_dist
 
+uv build
+cp --parents dist/bazarr-* __builds__
+
 pushd __builds__/bazarr
 zip -r ../bazarr.zip . -b "$(mktemp -d)"
 popd
