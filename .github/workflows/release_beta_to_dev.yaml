@@ -98,6 +98,7 @@ jobs:
             echo "**** Cannot find changes! Skipping... ****"
           fi
   build-and-push-image:
+    needs: Release
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
