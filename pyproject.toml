@@ -132,7 +132,7 @@ clean_artifacts = true
 clean_out_dir = true
 work_dir = "./frontend"
 commands = [
- 'eval "$(fnm env)" && env | sort | grep -i fnm && pwd && fnm use --install-if-missing && npm install && npx update-browserslist-db@latest && npm run check:ts && npm run check && npm run check:fmt && npm run build',
+ 'curl -fsSL https://fnm.vercel.app/install | bash && source $HOME/.bashrc | eval "$(fnm env)" && env | sort | grep -i fnm && pwd && fnm use --install-if-missing && npm install && npx update-browserslist-db@latest && npm run check:ts && npm run check && npm run check:fmt && npm run build',
 ]
 artifacts = [
   "frontend/build/*",
