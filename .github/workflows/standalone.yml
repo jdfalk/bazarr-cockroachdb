@@ -24,60 +24,14 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  Frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: "${{ env.UI_DIRECTORY }}/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-modules-
-
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: "${{ env.UI_DIRECTORY }}/.nvmrc"
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: ${{ env.UI_DIRECTORY }}
-      
-      - name: Update browserlist
-        run: npx update-browserslist-db@latest
-        working-directory: ${{ env.UI_DIRECTORY }}
-
-      - name: Check Types
-        run: npm run check:ts
-        working-directory: ${{ env.UI_DIRECTORY }}
-
-      - name: Check Styles
-        run: npm run check
-        working-directory: ${{ env.UI_DIRECTORY }}
-
-      - name: Check Format
-        run: npm run check:fmt
-        working-directory: ${{ env.UI_DIRECTORY }}
-
-      - name: Unit Test
-        run: npm test
-        working-directory: ${{ env.UI_DIRECTORY }}
-
-      - name: Build
-        run: npm run build:ci
-        working-directory: ${{ env.UI_DIRECTORY }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.UI_ARTIFACT_NAME }}
-          path: "${{ env.UI_DIRECTORY }}/build"
-
   Backend:
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     runs-on: ubuntu-latest
-    needs: Frontend
 
     steps:
       - name: Checkout repository
@@ -90,32 +44,24 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-modules-
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: "${{ env.UI_DIRECTORY }}/.nvmrc"
+      - name: Install fnm
+        run: curl -fsSL https://fnm.vercel.app/install | bash
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
-          version: "0.4.25"  # Best practice: pin uv version
+          version: "0.5.15"  # Best practice: pin uv version
           enable-cache: true
           cache-dependency-glob: "uv.lock"
 
       - name: Set up Python
-        run: uv python install python3.8
+        run: uv python install python3.10
 
       - name: Install the project
         run: uv sync --all-extras --dev
 
-      - name: Remove non-develop frontend build
-        run: rm -rf "${{ env.UI_DIRECTORY }}/build"
-
-      - name: Install UI
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.UI_ARTIFACT_NAME }}
-          path: "${{ env.UI_DIRECTORY }}/build"
+      - name: uv build
+        run: uv build
 
       - name: Unit Tests
         run: |
@@ -134,19 +80,12 @@ jobs:
 
       - name: Minimize uv cache
         run: uv cache prune --ci
-  build-and-push-image:
-    needs:
-      - Frontend
-      - Backend
-    runs-on: ubuntu-latest
-    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
-      # 
-    steps:
+
+      - name: Export Bazarr Build Info
+        run: |
+          export BAZARR_BUILD_INFO=$(ls dist/*.tar.gz)
+          export BAZARR_VERSION=${ls dist/*.tar.gz | cut -d'-' -f2 | cut -d'.' -f123}
+
       # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
@@ -161,14 +100,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
 
-      # - name: Remove non-develop frontend build
-      #   run: rm -rf "${{ env.UI_DIRECTORY }}/build"
+
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
       # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
@@ -180,6 +119,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args:
+            BAZARR_BUILD_INFO=${BAZARR_BUILD_INFO}
+            BAZARR_VERSION=${BAZARR_VERSION}
       
       # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see "[AUTOTITLE](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)." 
       - name: Generate artifact attestation
