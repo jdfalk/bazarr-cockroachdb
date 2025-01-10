@@ -1,9 +1,7 @@
-name: CI
+name: Standalone Build
 
 on:
   push:
-    branches: 
-      - develop
     paths:
       - frontend/**
       - bazarr/**
@@ -12,10 +10,11 @@ on:
       - pyproject.toml
       - uv.lock
       - .python-version
-      - .github/workflows/ci.yml
+      - .github/workflows/standalone.yml
   pull_request:
     branches: 
       - develop
+      - master
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
   UI_DIRECTORY: ./frontend
