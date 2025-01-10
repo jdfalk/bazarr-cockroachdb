@@ -3,3 +3,5 @@ custom_libs
 frontend/build
 bazarr.py
 migrations
+uv.lock
+pyproject.toml
