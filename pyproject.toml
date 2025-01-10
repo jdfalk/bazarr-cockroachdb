@@ -127,13 +127,12 @@ exclude = [
 "./frontend/build" = "bazarr/frontend/build"
 
 [[tool.hatch.build.targets.wheel.hooks.build-scripts.scripts]]
-out_dir = "frontend/build"
+out_dir = "./frontend/build"
 clean_artifacts = true
 clean_out_dir = true
-work_dir = "frontend"
+work_dir = "./frontend"
 commands = [
- "npm install",
- "npm run build",
+ 'eval "$(fnm env)" && env | sort | grep -i fnm && pwd && fnm use --install-if-missing && npm install && npx update-browserslist-db@latest && npm run check:ts && npm run check && npm run check:fmt && npm run build',
 ]
 artifacts = [
   "frontend/build/*",
