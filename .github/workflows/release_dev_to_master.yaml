@@ -95,6 +95,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-push-image:
+    needs: Merge
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
