@@ -27,6 +27,7 @@ RUN \
   libpq-dev \
   libxml2-dev \
   libxslt-dev \
+  rsync \
   python3-dev && \
   echo "**** install packages ****" && \
   apk add --no-cache \
@@ -50,6 +51,8 @@ RUN ls && \
   tar -xf \
   $(ls *.tar.gz) -C \
   /app/bazarr/bin && \
+  rsync -avzP --remove-source-files /app/bazarr/bin/bazarr-${BAZARR_VERSION}/ /app/bazarr/bin/ && \
+  rmdir /app/bazarr/bin/bazarr-${BAZARR_VERSION} && \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
   printf "Linuxserver.io version: ${BAZARR_VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** clean up ****" && \
