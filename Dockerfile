@@ -15,7 +15,9 @@ LABEL maintainer="chbmb"
 ENV TZ="Etc/UTC"
 ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
-# COPY dist/* ./
+RUN mkdir /pybuild
+
+COPY . /pybuild
 
 RUN \
   echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
