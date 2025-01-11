@@ -19,6 +19,8 @@ COPY dist/* ./
 
 RUN \
   echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+  echo "@oldpythonmain http://dl-cdn.alpinelinux.org/alpine/v3.17/main" >> /etc/apk/repositories && \
+  echo "@oldpythoncommunity http://dl-cdn.alpinelinux.org/alpine/v3.17/community" >> /etc/apk/repositories && \
   cat /etc/apk/repositories && \
   apk update && \
   echo "**** install build packages ****" && \
@@ -28,17 +30,18 @@ RUN \
   libffi-dev \
   libpq-dev \
   libxml2-dev \
-  libxslt-dev \
-  rsync \
-  python3-dev && \
+  libxslt-dev && \
+  # python3-dev && \
   echo "**** install packages ****" && \
   apk add --no-cache \
   ffmpeg \
   libxml2 \
   libxslt \
-  mediainfo \
-  python3 && \
-  apk add --no-cache uv@testing && \
+  mediainfo && \
+  # python3 && \
+  apk add --no-cache uv@testing \
+  python3-dev@oldpythonmain \
+  python3@oldpythonmain && \
   echo "**** install nodejs ****" && \
   apk add --no-cache \
   nodejs \
