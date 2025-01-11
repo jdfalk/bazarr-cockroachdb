@@ -55,8 +55,8 @@ RUN \
   uv build --directory /pybuild -v --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
   echo "**** install bazarr ****" && \
   mkdir -p /app/bazarr && \
-  export BAZARR_BUILD_INFO=$(ls /pybuild/dist/*.tar.gz | cut -d'/' -f3) && \
-  export BAZARR_VERSION=$(ls /pybuild/dist/*.tar.gz | cut -d'/' -f3 | cut -d'-' -f2 | cut -d'.' -f1-3) && \
+  export BAZARR_BUILD_INFO=$(ls /pybuild/dist/*.tar.gz | cut -d'/' -f4) && \
+  export BAZARR_VERSION=$(ls /pybuild/dist/*.tar.gz | cut -d'/' -f4 | cut -d'-' -f2 | cut -d'.' -f1-3) && \
   echo "Bazarr version is ${BAZARR_VERSION}" && \
   echo "Bazarr build info is ${BAZARR_BUILD_INFO}" && \
   tar -xf \
