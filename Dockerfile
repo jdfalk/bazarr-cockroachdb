@@ -16,6 +16,10 @@ ENV TZ="Etc/UTC"
 ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
 RUN \
+  cat /etc/apk/repositories && \
+  apk update
+
+RUN \
   echo "**** install build packages ****" && \
   apk add --no-cache --virtual=build-dependencies \
   build-base \
