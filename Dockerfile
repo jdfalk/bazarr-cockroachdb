@@ -52,7 +52,7 @@ RUN \
   echo "**** uv sync ****" && \
   uv sync --directory /pybuild -v --compile-bytecode --all-extras --dev --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
   echo "**** uv build ****" && \
-  uv build --directory /pybuild -v --compile-bytecode --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
+  uv build --directory /pybuild -v --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
   echo "**** install bazarr ****" && \
   mkdir -p /app/bazarr && \
   export BAZARR_BUILD_INFO=$(ls dist/*.tar.gz | cut -d'/' -f2) && \
