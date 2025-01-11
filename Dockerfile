@@ -25,7 +25,6 @@ RUN \
   libxml2-dev \
   libxslt-dev \
   python3-dev && \
-  npm && \
   echo "**** install packages ****" && \
   apk add --no-cache \
   ffmpeg \
@@ -33,11 +32,14 @@ RUN \
   libxslt \
   mediainfo \
   python3 && \
+  npm && \
+  fnm && \
+  uv && \
   echo "**** install bazarr ****" && \
   mkdir -p \
   /app/bazarr/bin
-  COPY dist/${BAZARR_BUILD_INFO} ./
-  RUN tar -xf \
+COPY dist/${BAZARR_BUILD_INFO} ./
+RUN tar -xf \
   ${BAZARR_BUILD_INFO} -C \
   /app/bazarr/bin && \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
