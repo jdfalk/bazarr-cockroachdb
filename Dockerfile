@@ -18,9 +18,7 @@ ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 RUN \
   echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
   cat /etc/apk/repositories && \
-  apk update
-
-RUN \
+  apk update && \
   echo "**** install build packages ****" && \
   apk add --no-cache --virtual=build-dependencies \
   build-base \
@@ -29,8 +27,7 @@ RUN \
   libpq-dev \
   libxml2-dev \
   libxslt-dev \
-  python3-dev
-RUN \
+  python3-dev && \
   echo "**** install packages ****" && \
   apk add --no-cache \
   ffmpeg \
@@ -44,8 +41,7 @@ RUN \
   echo "**** install nodejs ****" && \
   apk add --no-cache \
   nodejs \
-  npm
-RUN \
+  npm && \
   echo "**** install bazarr ****" && \
   mkdir -p \
   /app/bazarr/bin
@@ -59,10 +55,12 @@ RUN ls && \
   echo "**** clean up ****" && \
   apk del --purge \
   build-dependencies && \
+  apk cache clean && \
   rm -rf \
   $HOME/.cache \
   $HOME/.cargo \
-  /tmp/*
+  /tmp/* \
+  /var/cache/apk/* 
 
 # add local files
 COPY root/ /
