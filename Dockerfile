@@ -29,7 +29,6 @@ RUN \
   libpq-dev \
   libxml2-dev \
   libxslt-dev \
-  rsync \
   python3-dev && \
   echo "**** install packages ****" && \
   apk add --no-cache \
@@ -67,7 +66,8 @@ RUN \
   rm -rf \
   $HOME/.cache \
   $HOME/.cargo \
-  /tmp/* 
+  /tmp/* \
+  /var/cache/apk/* 
 
 # add local files
 COPY root/ /
