@@ -37,7 +37,8 @@ RUN \
   libxml2 \
   libxslt \
   mediainfo \
-  python3
+  python3 \
+  pip
 RUN \
   apk add --no-cache uv@testing
 RUN \
@@ -49,10 +50,10 @@ RUN \
   echo "**** install bazarr ****" && \
   mkdir -p \
   /app/bazarr/bin
-COPY dist/*.tar.gz ./
+COPY dist/* ./
 RUN ls && \
   tar -xf \
-  ${BAZARR_BUILD_INFO} -C \
+  $(ls *.tar.gz) -C \
   /app/bazarr/bin && \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
   printf "Linuxserver.io version: ${BAZARR_VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
