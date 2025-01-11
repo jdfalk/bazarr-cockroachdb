@@ -13,7 +13,7 @@ LABEL build_version="Linuxserver.io version:- ${BAZARR_VERSION} Build-date:- ${B
 LABEL maintainer="chbmb"
 # hard set UTC in case the user does not define it
 ENV TZ="Etc/UTC"
-ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
+# ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
 RUN mkdir /pybuild
 
@@ -74,7 +74,8 @@ RUN \
   $HOME/.cache \
   $HOME/.cargo \
   /tmp/* \
-  /var/cache/apk/*
+  /var/cache/apk/* && \
+  chown -R abc:abc /pybuild /app /lsiopy 
 
 
 # add local files
