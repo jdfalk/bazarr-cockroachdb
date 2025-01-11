@@ -36,8 +36,8 @@ RUN \
   ffmpeg \
   libxml2 \
   libxslt \
-  mediainfo && \
-  # python3 && \
+  mediainfo \
+  python3 && \
   apk add --no-cache uv@testing && \
   echo "**** install nodejs ****" && \
   apk add --no-cache \
@@ -67,6 +67,7 @@ RUN \
   $HOME/.cache \
   $HOME/.cargo \
   /tmp/* \
+  .python-version \
   /var/cache/apk/* 
 
 # add local files
