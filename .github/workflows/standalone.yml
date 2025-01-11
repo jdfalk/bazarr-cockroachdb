@@ -131,7 +131,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=schedule,enable=true,priority=1000,prefix=,suffix=,pattern=nightly
             type=semver,pattern={{major}}.{{minor}},suffix=beta,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
-            type=semver,pattern={{major}}.{{minor}},suffix=alpha,enable=${{ !(github.ref == format('refs/heads/{0}', 'develop')) || !is_default_branch }}
+            type=semver,pattern={{major}}.{{minor}},suffix=alpha,enable=${{ !(github.ref == format('refs/heads/{0}', 'develop')) or !is_default_branch }}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}
