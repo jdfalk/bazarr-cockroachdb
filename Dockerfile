@@ -16,7 +16,7 @@ ENV TZ="Etc/UTC"
 ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
 RUN \
-  echo "@personal https:/personal-repo.example.com/alpine-apks/" >> /etc/apk/repositories && \
+  echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
   cat /etc/apk/repositories && \
   apk update
 
