@@ -37,8 +37,9 @@ RUN \
   libxml2 \
   libxslt \
   mediainfo \
-  python3 && \
-  uv@testing
+  python3
+RUN \
+  apk add --no-cache uv@testing
 RUN \
   echo "**** install nodejs ****" && \
   apk add --no-cache \
