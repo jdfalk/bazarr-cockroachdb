@@ -51,6 +51,7 @@ RUN \
   echo "**** building bazarr ****" && \
   echo "**** uv sync ****" && \
   uv sync --directory /pybuild --all-extras --dev --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
+  echo "**** uv build ****" && \
   uv build --directory /pybuild --compile-bytecode --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
   echo "**** install bazarr ****" && \
   mkdir -p /app/bazarr && \
