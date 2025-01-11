@@ -15,6 +15,8 @@ LABEL maintainer="chbmb"
 ENV TZ="Etc/UTC"
 ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
+COPY dist/* ./
+
 RUN \
   echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
   cat /etc/apk/repositories && \
@@ -34,20 +36,16 @@ RUN \
   ffmpeg \
   libxml2 \
   libxslt \
-  mediainfo \
-  python3 
-RUN \
-  apk add --no-cache uv@testing
-RUN \
+  mediainfo && \
+  # python3 && \
+  apk add --no-cache uv@testing && \
   echo "**** install nodejs ****" && \
   apk add --no-cache \
   nodejs \
   npm && \
   echo "**** install bazarr ****" && \
-  mkdir -p \
-  /app/bazarr/bin
-COPY dist/* ./
-RUN ls && \
+  mkdir -p /app/bazarr/bin && \
+  rm -rf /var/cache/apk/* && \
   export BAZARR_BUILD_INFO=$(ls *.tar.gz) && \
   export BAZARR_VERSION=$(ls *.tar.gz | cut -d'-' -f2 | cut -d'.' -f1-3) && \
   echo "Bazarr version is ${BAZARR_VERSION}" && \
@@ -59,6 +57,7 @@ RUN ls && \
   rsync -az --remove-source-files /app/bazarr/bin/bazarr-${BAZARR_VERSION}/ /app/bazarr/bin/ && \
   echo "**** rmdir old bazarr folder ****" && \
   rm -rf /app/bazarr/bin/bazarr-${BAZARR_VERSION} && \
+  uv python -n install python3.10 && \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
   printf "Linuxserver.io version: ${BAZARR_VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** clean up ****" && \
@@ -68,8 +67,7 @@ RUN ls && \
   rm -rf \
   $HOME/.cache \
   $HOME/.cargo \
-  /tmp/* \
-  /var/cache/apk/* 
+  /tmp/* 
 
 # add local files
 COPY root/ /
