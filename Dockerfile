@@ -33,7 +33,6 @@ RUN \
   libxslt \
   mediainfo \
   python3 && \
-  fnm && \
   uv
 RUN \
   echo "**** install nodejs ****" && \
