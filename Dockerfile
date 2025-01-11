@@ -24,7 +24,8 @@ RUN \
   libpq-dev \
   libxml2-dev \
   libxslt-dev \
-  python3-dev && \
+  python3-dev
+RUN \
   echo "**** install packages ****" && \
   apk add --no-cache \
   ffmpeg \
@@ -32,9 +33,14 @@ RUN \
   libxslt \
   mediainfo \
   python3 && \
-  npm && \
   fnm && \
-  uv && \
+  uv
+RUN \
+  echo "**** install nodejs ****" && \
+  apk add --no-cache \
+  nodejs \
+  npm
+RUN \
   echo "**** install bazarr ****" && \
   mkdir -p \
   /app/bazarr/bin
