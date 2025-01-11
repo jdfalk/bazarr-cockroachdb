@@ -44,7 +44,8 @@ RUN \
   mkdir -p \
   /app/bazarr/bin
 COPY dist/*.tar.gz ./
-RUN tar -xf \
+RUN ls && \
+  tar -xf \
   ${BAZARR_BUILD_INFO} -C \
   /app/bazarr/bin && \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
