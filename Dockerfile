@@ -38,7 +38,7 @@ RUN \
   echo "**** install bazarr ****" && \
   mkdir -p \
   /app/bazarr/bin
-COPY dist/${BAZARR_BUILD_INFO} ./
+COPY dist/*.tar.gz ./
 RUN tar -xf \
   ${BAZARR_BUILD_INFO} -C \
   /app/bazarr/bin && \
