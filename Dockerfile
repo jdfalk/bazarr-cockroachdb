@@ -17,7 +17,6 @@ ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
 RUN \
   echo "@personal https:/personal-repo.example.com/alpine-apks/" >> /etc/apk/repositories && \
-  setup-apkrepos -cf && \
   cat /etc/apk/repositories && \
   apk update
 
