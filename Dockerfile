@@ -37,8 +37,7 @@ RUN \
   libxml2 \
   libxslt \
   mediainfo \
-  python3 \
-  pip
+  python3 
 RUN \
   apk add --no-cache uv@testing
 RUN \
