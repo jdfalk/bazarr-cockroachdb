@@ -11,6 +11,7 @@ on:
       - uv.lock
       - .python-version
       - .github/workflows/standalone.yml
+      - Dockerfile
   pull_request:
     branches: 
       - develop
