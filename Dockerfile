@@ -15,7 +15,7 @@ LABEL maintainer="chbmb"
 ENV TZ="Etc/UTC"
 ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
-COPY dist/* ./
+# COPY dist/* ./
 
 RUN \
   echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
@@ -46,10 +46,14 @@ RUN \
   apk add --no-cache \
   nodejs \
   npm && \
+  echo "**** building bazarr ****" && \
+  echo "**** uv sync ****" && \
+  uv sync --all-extras --dev --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
+  uv build --compile-bytecode --index https://wheel-index.linuxserver.io/alpine-3.21/ && \
   echo "**** install bazarr ****" && \
   mkdir -p /app/bazarr && \
-  export BAZARR_BUILD_INFO=$(ls *.tar.gz) && \
-  export BAZARR_VERSION=$(ls *.tar.gz | cut -d'-' -f2 | cut -d'.' -f1-3) && \
+  export BAZARR_BUILD_INFO=$(ls dist/*.tar.gz | cut -d'/' -f2) && \
+  export BAZARR_VERSION=$(ls dist/*.tar.gz | cut -d'/' -f2 | cut -d'-' -f2 | cut -d'.' -f1-3) && \
   echo "Bazarr version is ${BAZARR_VERSION}" && \
   echo "Bazarr build info is ${BAZARR_BUILD_INFO}" && \
   tar -xf \
@@ -67,7 +71,6 @@ RUN \
   $HOME/.cache \
   $HOME/.cargo \
   /tmp/* \
-  .python-version \
   /var/cache/apk/*
 
 
