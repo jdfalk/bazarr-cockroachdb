@@ -48,6 +48,10 @@ RUN \
   /app/bazarr/bin
 COPY dist/* ./
 RUN ls && \
+  export BAZARR_BUILD_INFO=$(ls *.tar.gz) && \
+  export BAZARR_VERSION=$(ls *.tar.gz | cut -d'-' -f2 | cut -d'.' -f1-3) && \
+  echo "Bazarr version is ${BAZARR_VERSION}" && \
+  echo "Bazarr build info is ${BAZARR_BUILD_INFO}" && \
   tar -xf \
   $(ls *.tar.gz) -C \
   /app/bazarr/bin && \
