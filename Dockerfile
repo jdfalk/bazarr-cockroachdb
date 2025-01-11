@@ -56,7 +56,7 @@ RUN \
   echo "**** rsync bazarr ****" && \
   rsync -az --remove-source-files /app/bazarr/bin/bazarr-${BAZARR_VERSION}/ /app/bazarr/bin/ && \
   echo "**** rmdir old bazarr folder ****" && \
-  rmdir /app/bazarr/bin/bazarr-${BAZARR_VERSION} && \
+  rm -rf /app/bazarr/bin/bazarr-${BAZARR_VERSION} && \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
   printf "Linuxserver.io version: ${BAZARR_VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** clean up ****" && \
