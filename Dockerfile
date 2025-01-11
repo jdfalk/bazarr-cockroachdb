@@ -59,7 +59,7 @@ RUN \
   echo "Bazarr version is ${BAZARR_VERSION}" && \
   echo "Bazarr build info is ${BAZARR_BUILD_INFO}" && \
   tar -xf \
-  $(ls *.tar.gz) -C \
+  $(ls /pybuild/dist/*.tar.gz) -C \
   /app/bazarr && \
   echo "**** mv bazarr ****" && \
   mv /app/bazarr/bazarr-${BAZARR_VERSION} /app/bazarr/bin && \
