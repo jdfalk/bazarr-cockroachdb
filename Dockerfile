@@ -16,6 +16,8 @@ ENV TZ="Etc/UTC"
 ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
 RUN \
+  echo "@personal https:/personal-repo.example.com/alpine-apks/" >> /etc/apk/repositories && \
+  setup-apkrepos -cf && \
   cat /etc/apk/repositories && \
   apk update
 
@@ -37,7 +39,7 @@ RUN \
   libxslt \
   mediainfo \
   python3 && \
-  uv
+  uv@testing
 RUN \
   echo "**** install nodejs ****" && \
   apk add --no-cache \
