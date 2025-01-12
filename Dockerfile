@@ -13,7 +13,7 @@ LABEL build_version="Linuxserver.io version:- ${BAZARR_VERSION} Build-date:- ${B
 LABEL maintainer="chbmb"
 # hard set UTC in case the user does not define it
 ENV TZ="Etc/UTC"
-# ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
+ENV UV_PROJECT_ENVIRONMENT="/lsiopy"
 
 RUN mkdir /pybuild
 
@@ -67,15 +67,19 @@ RUN \
   echo "UpdateMethod=docker\nBranch=master\nPackageVersion=${BAZARR_VERSION}\nPackageAuthor=linuxserver.io" > /app/bazarr/package_info && \
   printf "Linuxserver.io version: ${BAZARR_VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** clean up ****" && \
-  apk del --purge \
-  build-dependencies && \
   apk cache clean && \
   rm -rf \
   $HOME/.cache \
   $HOME/.cargo \
   /tmp/* \
   /var/cache/apk/* && \
-  chown -R abc:abc /pybuild /app /lsiopy 
+  chown -R 1001:1001 /pybuild && \
+  chown -R 1001:1001 /app && \
+  chown -R 1001:1001 /lsiopy && \
+  ls -alsh / && \
+  ls -alsh /app && \
+  ls -alsh /lsiopy && \
+  ls -alsh /app/bazarr
 
 
 # add local files
